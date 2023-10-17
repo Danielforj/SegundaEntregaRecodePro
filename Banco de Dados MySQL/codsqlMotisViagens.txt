@@ -1,0 +1,96 @@
+CREATE DATABASE motisviagens;
+
+USE motisviagens;
+
+CREATE TABLE Usuario (
+id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+nome_usuario VARCHAR(100) NOT NULL,
+email_usuario VARCHAR(80) NOT NULL,
+telefone_usuario VARCHAR(30) NOT NULL,
+senha_usuario VARCHAR(30) NOT NULL,
+data_login DATETIME
+);
+
+CREATE TABLE Cliente (
+id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+cartao_cliente VARCHAR(19),
+cpf_cliente VARCHAR(11) UNIQUE NOT NULL,
+id_usuario INT,
+FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
+);
+
+CREATE TABLE Endereco (
+id_endereco INT AUTO_INCREMENT PRIMARY KEY,
+cep VARCHAR(9) NOT NULL,
+estado VARCHAR(2) NOT NULL,
+rua VARCHAR (200) NOT NULL,
+numero VARCHAR (10) NOT NULL,
+complemento VARCHAR (50),
+bairro VARCHAR (50) NOT NULL,
+cidade VARCHAR (50) NOT NULL,
+id_cliente INT,
+FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente)
+);
+
+CREATE TABLE Administrador (
+id_administrador INT AUTO_INCREMENT PRIMARY KEY,
+data_modificacao DATETIME,
+id_usuario INT,
+FOREIGN KEY (id_usuario) REFERENCES Usuario(id_usuario)
+);
+
+CREATE TABLE Compra (
+id_compra INT AUTO_INCREMENT PRIMARY KEY,
+forma_pagamento INTEGER NOT NULL,
+quantidade_item INTEGER,
+valor_compra FLOAT NOT NULL
+);
+
+CREATE TABLE Realiza (
+id_cliente_compra INT AUTO_INCREMENT PRIMARY KEY,
+id_cliente INTEGER,
+id_compra INTEGER,
+FOREIGN KEY (id_cliente) REFERENCES Cliente(id_cliente),
+FOREIGN KEY (id_compra) REFERENCES Compra(id_compra)
+);
+
+CREATE TABLE CidadeDestino (
+id_destino INT AUTO_INCREMENT PRIMARY KEY,
+preco_passagem FLOAT,
+nome_cidade VARCHAR (50) NOT NULL,
+empresa_transporte VARCHAR (50) NOT NULL,
+data_ida DATETIME NOT NULL,
+endereco_embarque VARCHAR (255) NOT NULL,
+data_retorno DATETIME,
+endereco_desembarque VARCHAR (255) NOT NULL
+);
+
+CREATE TABLE Hotel (
+id_hotel INT AUTO_INCREMENT PRIMARY KEY,
+nome_hotel VARCHAR (100) NOT NULL,
+preco_hotel FLOAT NOT NULL,
+endereco_hotel VARCHAR (255) NOT NULL,
+data_checkin DATETIME NOT NULL,
+data_checkout DATETIME NOT NULL
+);
+
+CREATE TABLE PacoteViagem (
+id_pacote INT AUTO_INCREMENT PRIMARY KEY,
+descricao TEXT,
+data_pacote DATETIME NOT NULL,
+tipo_transporte ENUM ('Avião','Ônibus','Van') NOT NULL, 
+preco_total FLOAT NOT NULL,
+desconto_avista FLOAT,
+id_destino INTEGER,
+id_hotel INTEGER,
+FOREIGN KEY (id_destino) REFERENCES CidadeDestino(id_destino),
+FOREIGN KEY (id_hotel) REFERENCES Hotel(id_hotel)
+);
+
+CREATE TABLE Contem (
+id_compra_pacote INT AUTO_INCREMENT PRIMARY KEY,
+id_compra INTEGER,
+id_pacote INTEGER,
+FOREIGN KEY (id_compra) REFERENCES Compra(id_compra),
+FOREIGN KEY (id_pacote) REFERENCES PacoteViagem(id_pacote)
+);
